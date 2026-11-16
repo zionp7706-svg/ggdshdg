@@ -18,7 +18,6 @@
   }
   *{box-sizing:border-box}
 
-  /* ══════ BLUE PAGE ══════ */
   body{margin:0;padding:24px;min-height:100vh;display:grid;place-items:center;
        background:
          radial-gradient(120% 85% at 50% -10%, #2b93e8 0%, #0f6cc0 38%, #0a4a8f 68%, #06305e 100%)
@@ -39,7 +38,7 @@
   .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:22px;padding:22px 30px 30px}
   @media (max-width:760px){.grid{grid-template-columns:1fr}.capsule{border-radius:8px}}
 
-  /* ══════ CALENDAR — Microsoft ══════ */
+  /* CALENDAR — Microsoft */
   .cal{background:#fff;border:1px solid var(--ms-line);border-radius:8px;
        padding:12px 12px 10px;box-shadow:var(--ms-shadow);
        font-family:"Segoe UI Variable Text","Segoe UI",-apple-system,sans-serif;
@@ -86,7 +85,7 @@
             display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ms-ink-3)}
   .cal-foot i{width:7px;height:7px;border-radius:50%;background:var(--ms-blue);display:block}
 
-  /* ══════ BLUE FORM PANEL ══════ */
+  /* BLUE FORM PANEL */
   .form-panel{background:linear-gradient(165deg,#0b6cc4 0%, var(--ms-blue) 48%, var(--ms-blue-deep) 100%);
     border-radius:8px;padding:18px 18px 20px;color:#fff;align-self:start;
     box-shadow:0 16px 34px -18px rgba(3,35,70,.8), inset 0 1px 0 rgba(255,255,255,.2)}
@@ -100,8 +99,7 @@
     padding:9px 12px;border:1px solid rgba(255,255,255,.6);border-radius:4px;background:#fff;
     transition:border-color .1s,box-shadow .1s}
   .form-panel textarea{resize:vertical;min-height:76px}
-  .form-panel input:hover,.form-panel select:hover,.form-panel textarea:hover{
-    border-color:#fff}
+  .form-panel input:hover,.form-panel select:hover,.form-panel textarea:hover{border-color:#fff}
   .form-panel input:focus,.form-panel select:focus,.form-panel textarea:focus{
     outline:none;border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
   .form-panel input::placeholder,.form-panel textarea::placeholder{color:#9aa5b1}
@@ -111,7 +109,6 @@
   .form-panel .err{color:#ffe0de;font-weight:600}
   .form-panel .hint{color:#d6e9fa}
 
-  /* slots — read as glass on the blue panel */
   .slots{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
   .slot{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.14);border-radius:4px;
         padding:8px 14px;font:inherit;font-size:13.5px;cursor:pointer;color:#fff;
@@ -129,7 +126,7 @@
   .btn.ghost:hover{background:var(--ms-hover)}
   .err{color:var(--ms-bad);font-size:13px;min-height:18px}
 
-  /* ══════ PENDING ══════ */
+  /* PENDING */
   .pending{padding:44px 34px 38px;text-align:center;max-width:520px;margin:0 auto}
   .pill-ok{width:72px;height:72px;border-radius:50%;background:var(--ms-blue);color:#fff;
            display:grid;place-items:center;margin:0 auto 20px;font-size:30px;
@@ -143,7 +140,7 @@
   .summary dd{margin:0;font-weight:600}
   .count{font-size:13px;color:var(--ms-ink-3);margin-top:14px}
 
-  /* ══════ CAPSULE GATE ══════ */
+  /* CAPSULE GATE */
   #view-capsule{padding:48px 34px 54px;display:grid;place-items:center;gap:16px}
   .pill-card{width:100%;max-width:560px;border-radius:999px;padding:12px 14px 12px 18px;
     display:flex;align-items:center;gap:14px;color:#fff;
@@ -184,12 +181,10 @@
   .shake{animation:shake .3s}
   @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
-  /* hidden write-up (stays hidden) */
   .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
            overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
   .capsule-note,#capText,#capTitle,#capHost{display:none!important}
 
-  /* ══════ FINAL ══════ */
   #view-final{padding:56px 34px;text-align:center}
   #view-final .flag{display:inline-block;background:var(--ms-blue-tint);color:var(--ms-blue-dark);
     border:1px solid #c7e0f4;border-radius:999px;padding:5px 13px;font-size:12px;
@@ -200,7 +195,7 @@
 <body>
 
 <main class="capsule">
-  <!-- 1 · BOOK (blue page) -->
+  <!-- 1 · BOOK -->
   <section id="view-book">
     <div class="capsule-head">
       <span class="eyebrow">● Appointments</span>
@@ -209,7 +204,6 @@
     </div>
 
     <div class="grid">
-      <!-- white Microsoft calendar against the blue -->
       <div class="cal" role="group" aria-label="Choose a date">
         <div class="cal-top">
           <span class="ms-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
@@ -225,7 +219,6 @@
         <div class="cal-foot"><i></i><span id="calFoot">Availability shown in your local time</span></div>
       </div>
 
-      <!-- blue form panel -->
       <div class="form-panel">
         <h2 id="slotTitle">Choose a time</h2>
         <div class="slots" id="slots"><p class="hint">Select a date first.</p></div>
@@ -233,7 +226,6 @@
         <form id="form" novalidate>
           <input id="hp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
           <label>Full name <input id="name" autocomplete="name" placeholder="Jordan Ellis" required></label>
-          <label>Email <input id="email" type="email" autocomplete="email" placeholder="jordan@company.com" required></label>
           <label>What’s this about?
             <select id="topic">
               <option>Intro call</option><option>Project quote</option>
@@ -253,7 +245,7 @@
     <div class="pill-ok">✓</div>
     <span class="badge">⏳ Awaiting approval</span>
     <h1>Request sent</h1>
-    <p class="sub">We’ve passed your appointment to the team. You’ll get an email the moment it’s approved.</p>
+    <p class="sub">We’ve passed your appointment to the team. Keep this reference — confirmation appears here once it’s approved.</p>
 
     <dl class="summary">
       <div><dt>Reference</dt><dd id="sumRef">—</dd></div>
@@ -341,7 +333,7 @@ function renderCalendar(){
   daysEl.innerHTML = "";
 
   const first  = new Date(state.view.getFullYear(), state.view.getMonth(), 1);
-  const offset = (first.getDay()+6)%7;                      // Monday-first
+  const offset = (first.getDay()+6)%7;
   const total  = new Date(state.view.getFullYear(), state.view.getMonth()+1, 0).getDate();
   const limit  = addDays(today(), CONFIG.maxAdvanceDays);
 
@@ -418,29 +410,29 @@ function renderSlots(){
 }
 
 /* ============================================================
-   Submit
+   Submit — no email collected
    ============================================================ */
 const form=$$("form"), errEl=$$("err");
 
 form.addEventListener("submit",e=>{
   e.preventDefault();
-  const name=$$("name").value.trim(), email=$$("email").value.trim();
+  const name=$$("name").value.trim();
 
   if($$("hp").value) return (errEl.textContent="Verification failed. Please try again.");
   if(!state.date||!state.time) return (errEl.textContent="Please choose a date and a time.");
   if(!name) return (errEl.textContent="Please add your name.");
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return (errEl.textContent="That email doesn’t look right.");
   errEl.textContent="";
 
   lastPayload = {
     ref:"APT-"+Math.random().toString(36).slice(2,7).toUpperCase(),
-    name, email,
+    name,
     topic:$$("topic").value,
     notes:$$("notes").value.trim(),
     start:`${iso(state.date)}T${state.time}`,
     status:"pending_approval",
     humanApproved:false,
     createdAt:new Date().toISOString()
+    /* email removed — add `email` back here if you restore the field */
   };
 
   try{
