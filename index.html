@@ -6,26 +6,29 @@
 <title>Book an appointment</title>
 <style>
   :root{
-    /* ── Fluent / Microsoft 365 tokens ── */
     --ms-blue:#0078d4; --ms-blue-hover:#106ebe; --ms-blue-dark:#005a9e;
+    --ms-blue-deep:#0b5fa5; --ms-navy:#083a72;
     --ms-blue-soft:#deecf9; --ms-blue-tint:#eff6fc;
     --ms-ink:#323130; --ms-ink-2:#605e5c; --ms-ink-3:#8a8886;
     --ms-line:#edebe9; --ms-line-2:#c8c6c4;
-    --ms-hover:#f3f2f1; --ms-bg:#faf9f8;
+    --ms-hover:#f3f2f1;
     --ms-shadow:0 1.6px 3.6px rgba(0,0,0,.13), 0 .3px .9px rgba(0,0,0,.11);
     --ms-ok:#107c10; --ms-ok-soft:#dff6dd; --ms-bad:#a4262c; --ms-warn:#8a5300;
-
-    /* page shell */
-    --bg:#f3f2f1; --card:#fff; --line:var(--ms-line);
+    --card:#fff; --line:var(--ms-line);
   }
   *{box-sizing:border-box}
+
+  /* ══════ BLUE PAGE ══════ */
   body{margin:0;padding:24px;min-height:100vh;display:grid;place-items:center;
-       background:radial-gradient(90% 70% at 50% 0%, #e9f2fb 0%, var(--bg) 60%);
+       background:
+         radial-gradient(120% 85% at 50% -10%, #2b93e8 0%, #0f6cc0 38%, #0a4a8f 68%, #06305e 100%)
+         fixed;
        color:var(--ms-ink);
        font:16px/1.55 "Segoe UI Variable Text","Segoe UI",-apple-system,BlinkMacSystemFont,Inter,Roboto,sans-serif;
        -webkit-font-smoothing:antialiased}
   .capsule{width:100%;max-width:900px;background:var(--card);border:1px solid var(--line);
-           border-radius:12px;overflow:hidden;box-shadow:var(--ms-shadow)}
+           border-radius:12px;overflow:hidden;
+           box-shadow:0 30px 70px -30px rgba(2,20,45,.75), 0 2px 8px rgba(2,20,45,.25)}
   .capsule-head{padding:26px 30px 0}
   .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--ms-blue);color:#fff;
            font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:999px;
@@ -36,11 +39,11 @@
   .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:22px;padding:22px 30px 30px}
   @media (max-width:760px){.grid{grid-template-columns:1fr}.capsule{border-radius:8px}}
 
-  /* ═══════════ CALENDAR — Microsoft (Outlook/Fluent) ═══════════ */
+  /* ══════ CALENDAR — Microsoft ══════ */
   .cal{background:#fff;border:1px solid var(--ms-line);border-radius:8px;
        padding:12px 12px 10px;box-shadow:var(--ms-shadow);
-       font-family:"Segoe UI Variable Text","Segoe UI",-apple-system,sans-serif}
-
+       font-family:"Segoe UI Variable Text","Segoe UI",-apple-system,sans-serif;
+       align-self:start}
   .cal-top{display:flex;align-items:center;gap:6px;margin-bottom:10px}
   .ms-logo{display:grid;grid-template-columns:7px 7px;grid-template-rows:7px 7px;gap:1.5px;
            flex:0 0 auto;margin-right:2px}
@@ -49,16 +52,13 @@
   .ms-logo i:nth-child(2){background:#7fba00}
   .ms-logo i:nth-child(3){background:#00a4ef}
   .ms-logo i:nth-child(4){background:#ffb900}
-
   .cal-title{flex:1;min-width:0;font-size:15px;font-weight:600;color:var(--ms-ink);
              letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
              padding-left:4px}
-
   .today-btn{flex:0 0 auto;border:1px solid var(--ms-line-2);background:#fff;border-radius:4px;
              font:inherit;font-size:12px;font-weight:600;color:var(--ms-ink);
              padding:4px 10px;cursor:pointer;transition:background .1s}
   .today-btn:hover{background:var(--ms-hover)}
-
   .nav{width:28px;height:28px;flex:0 0 auto;border:0;border-radius:4px;background:transparent;
        color:var(--ms-ink-2);font-size:15px;line-height:1;cursor:pointer;
        display:grid;place-items:center;transition:background .1s,color .1s}
@@ -70,14 +70,13 @@
   .dow,.days{display:grid;grid-template-columns:repeat(7,1fr)}
   .dow{border-bottom:1px solid var(--ms-line);margin-bottom:4px}
   .dow span{text-align:center;font-size:11.5px;font-weight:600;color:var(--ms-ink-2);
-            padding:7px 0 6px;letter-spacing:0}
-
+            padding:7px 0 6px}
   .days{gap:2px}
   .day{height:32px;border:0;background:transparent;border-radius:4px;cursor:pointer;
        font:inherit;font-size:13.5px;color:var(--ms-ink);display:grid;place-items:center;
        font-variant-numeric:tabular-nums;transition:background .1s,color .1s}
   .day:hover:not(:disabled){background:var(--ms-blue-tint);color:var(--ms-blue-dark)}
-  .day:disabled{color:var(--ms-line-2);cursor:not-allowed;text-decoration:none}
+  .day:disabled{color:var(--ms-line-2);cursor:not-allowed}
   .day.today{color:var(--ms-blue);font-weight:700;box-shadow:inset 0 0 0 1px var(--ms-blue)}
   .day.sel{background:var(--ms-blue);color:#fff;font-weight:600;
            box-shadow:0 2px 6px -2px rgba(0,120,212,.75)}
@@ -87,28 +86,39 @@
             display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ms-ink-3)}
   .cal-foot i{width:7px;height:7px;border-radius:50%;background:var(--ms-blue);display:block}
 
-  /* ── right column ── */
-  h2{font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
-     color:var(--ms-ink-2);margin:0 0 10px}
-  .slots{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-  .slot{border:1px solid var(--ms-line-2);background:#fff;border-radius:4px;padding:8px 14px;
-        font:inherit;font-size:13.5px;cursor:pointer;color:var(--ms-ink);
-        font-variant-numeric:tabular-nums;transition:all .1s}
-  .slot:hover:not(:disabled){background:var(--ms-blue-tint);border-color:var(--ms-blue);
-                             color:var(--ms-blue-dark)}
-  .slot.sel{background:var(--ms-blue);border-color:var(--ms-blue);color:#fff;font-weight:600}
-  .slot:disabled{opacity:.45;cursor:not-allowed;text-decoration:line-through}
-  .hint{color:var(--ms-ink-3);font-size:13.5px;margin:0}
+  /* ══════ BLUE FORM PANEL ══════ */
+  .form-panel{background:linear-gradient(165deg,#0b6cc4 0%, var(--ms-blue) 48%, var(--ms-blue-deep) 100%);
+    border-radius:8px;padding:18px 18px 20px;color:#fff;align-self:start;
+    box-shadow:0 16px 34px -18px rgba(3,35,70,.8), inset 0 1px 0 rgba(255,255,255,.2)}
+  .form-panel h2{font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+    color:#cfe6fa;margin:0 0 10px}
+  .form-panel form{display:grid;gap:12px}
+  .form-panel label{font-size:13px;font-weight:600;display:grid;gap:6px;color:#eaf4fd}
 
-  form{display:grid;gap:12px}
-  label{font-size:13px;font-weight:600;display:grid;gap:6px;color:var(--ms-ink)}
-  input,select,textarea{width:100%;font:inherit;font-size:14px;color:var(--ms-ink);
-    padding:9px 12px;border:1px solid var(--ms-line-2);border-radius:4px;background:#fff;
+  .form-panel input,.form-panel select,.form-panel textarea{
+    width:100%;font:inherit;font-size:14px;color:var(--ms-ink);
+    padding:9px 12px;border:1px solid rgba(255,255,255,.6);border-radius:4px;background:#fff;
     transition:border-color .1s,box-shadow .1s}
-  textarea{resize:vertical;min-height:76px}
-  input:hover,select:hover,textarea:hover{border-color:var(--ms-ink-2)}
-  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ms-blue);
-    box-shadow:inset 0 -2px 0 0 var(--ms-blue)}
+  .form-panel textarea{resize:vertical;min-height:76px}
+  .form-panel input:hover,.form-panel select:hover,.form-panel textarea:hover{
+    border-color:#fff}
+  .form-panel input:focus,.form-panel select:focus,.form-panel textarea:focus{
+    outline:none;border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+  .form-panel input::placeholder,.form-panel textarea::placeholder{color:#9aa5b1}
+
+  .form-panel .btn{background:#fff;color:var(--ms-blue-dark);box-shadow:0 6px 16px -8px rgba(0,0,0,.6)}
+  .form-panel .btn:hover{background:var(--ms-blue-tint)}
+  .form-panel .err{color:#ffe0de;font-weight:600}
+  .form-panel .hint{color:#d6e9fa}
+
+  /* slots — read as glass on the blue panel */
+  .slots{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .slot{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.14);border-radius:4px;
+        padding:8px 14px;font:inherit;font-size:13.5px;cursor:pointer;color:#fff;
+        font-variant-numeric:tabular-nums;transition:all .12s}
+  .slot:hover:not(:disabled){background:rgba(255,255,255,.26);border-color:#fff}
+  .slot.sel{background:#fff;border-color:#fff;color:var(--ms-blue-dark);font-weight:600}
+  .slot:disabled{opacity:.45;cursor:not-allowed;text-decoration:line-through}
   .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0;pointer-events:none}
 
   .btn{width:100%;border:0;border-radius:4px;padding:13px 22px;font:inherit;font-weight:600;
@@ -119,7 +129,7 @@
   .btn.ghost:hover{background:var(--ms-hover)}
   .err{color:var(--ms-bad);font-size:13px;min-height:18px}
 
-  /* ── pending ── */
+  /* ══════ PENDING ══════ */
   .pending{padding:44px 34px 38px;text-align:center;max-width:520px;margin:0 auto}
   .pill-ok{width:72px;height:72px;border-radius:50%;background:var(--ms-blue);color:#fff;
            display:grid;place-items:center;margin:0 auto 20px;font-size:30px;
@@ -133,9 +143,8 @@
   .summary dd{margin:0;font-weight:600}
   .count{font-size:13px;color:var(--ms-ink-3);margin-top:14px}
 
-  /* ── capsule approval gate ── */
+  /* ══════ CAPSULE GATE ══════ */
   #view-capsule{padding:48px 34px 54px;display:grid;place-items:center;gap:16px}
-
   .pill-card{width:100%;max-width:560px;border-radius:999px;padding:12px 14px 12px 18px;
     display:flex;align-items:center;gap:14px;color:#fff;
     background:linear-gradient(135deg,var(--ms-blue) 0%, var(--ms-blue-dark) 100%);
@@ -147,7 +156,6 @@
   .pill-card.ok{background:linear-gradient(135deg,#13a10e 0%, #0b6a0b 100%);
                 box-shadow:0 20px 40px -20px rgba(11,106,11,.85), inset 0 1px 0 rgba(255,255,255,.3)}
   .pill-card.bad{background:linear-gradient(135deg,#d13438 0%, #8e1922 100%)}
-
   .pill-mark{width:42px;height:42px;flex:0 0 42px;border-radius:50%;
              background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:16px;
              border:1px solid rgba(255,255,255,.35);transition:background .3s}
@@ -156,7 +164,6 @@
   .pill-copy strong{display:block;font-size:14.5px;letter-spacing:-.01em;font-weight:600}
   .pill-copy span{display:block;font-size:12.5px;opacity:.88;
                   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
   .pill-go{position:relative;overflow:hidden;flex:0 0 auto;border:0;cursor:pointer;border-radius:999px;
     background:#fff;color:var(--ms-blue-dark);font:inherit;font-weight:700;font-size:13px;
     padding:11px 20px;touch-action:none;user-select:none;-webkit-user-select:none;
@@ -169,22 +176,20 @@
              transition:width .06s linear}
   .pill-card.ok .hold-fill{background:var(--ms-ok-soft)}
   .hold-label{position:relative;z-index:1;display:flex;align-items:center;gap:6px}
-
   .pill-track{width:100%;max-width:560px;height:8px;border-radius:999px;background:#deecf9;
               overflow:hidden;border:1px solid #c7e0f4;opacity:0;transition:opacity .3s}
   .pill-track.on{opacity:1}
   .pill-track i{display:block;height:100%;width:0;border-radius:999px;
                 background:linear-gradient(90deg,#13a10e,#0b6a0b)}
-
   .shake{animation:shake .3s}
   @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
-  /* ── the write-up that used to sit here is now invisible ── */
+  /* hidden write-up (stays hidden) */
   .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
            overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
   .capsule-note,#capText,#capTitle,#capHost{display:none!important}
 
-  /* ── final ── */
+  /* ══════ FINAL ══════ */
   #view-final{padding:56px 34px;text-align:center}
   #view-final .flag{display:inline-block;background:var(--ms-blue-tint);color:var(--ms-blue-dark);
     border:1px solid #c7e0f4;border-radius:999px;padding:5px 13px;font-size:12px;
@@ -195,7 +200,7 @@
 <body>
 
 <main class="capsule">
-  <!-- 1 · BOOK -->
+  <!-- 1 · BOOK (blue page) -->
   <section id="view-book">
     <div class="capsule-head">
       <span class="eyebrow">● Appointments</span>
@@ -204,7 +209,7 @@
     </div>
 
     <div class="grid">
-      <!-- Microsoft-styled calendar -->
+      <!-- white Microsoft calendar against the blue -->
       <div class="cal" role="group" aria-label="Choose a date">
         <div class="cal-top">
           <span class="ms-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
@@ -213,16 +218,15 @@
           <button class="nav" id="prev" type="button" aria-label="Previous month">‹</button>
           <button class="nav" id="next" type="button" aria-label="Next month">›</button>
         </div>
-
         <div class="dow" aria-hidden="true">
           <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
         </div>
         <div class="days" id="days"></div>
-
         <div class="cal-foot"><i></i><span id="calFoot">Availability shown in your local time</span></div>
       </div>
 
-      <div>
+      <!-- blue form panel -->
+      <div class="form-panel">
         <h2 id="slotTitle">Choose a time</h2>
         <div class="slots" id="slots"><p class="hint">Select a date first.</p></div>
 
@@ -263,7 +267,7 @@
     <button class="btn ghost" id="bookAnother" style="margin-top:10px">Book another time</button>
   </section>
 
-  <!-- 3 · CAPSULE gate (write-up removed) -->
+  <!-- 3 · CAPSULE gate -->
   <section id="view-capsule" hidden>
     <div class="pill-card" id="pillCard">
       <div class="pill-mark" id="pillMark">↗</div>
@@ -276,10 +280,7 @@
         <span class="hold-label" id="holdLabel">Hold to approve</span>
       </button>
     </div>
-
     <div class="pill-track" id="track"><i id="bar"></i></div>
-
-    <!-- invisible to sighted users, still announced by screen readers -->
     <p id="srStatus" class="sr-only" aria-live="polite"></p>
   </section>
 
@@ -300,7 +301,7 @@
    ============================================================ */
 const CONFIG = {
   businessName: "Northline Studio",
-  redirectUrl:  "https://example.com",      // ← your original site
+  redirectUrl:  "https://example.com",
   redirectSeconds: 10,
   slotMinutes: 30,
   maxAdvanceDays: 90,
@@ -313,15 +314,8 @@ const CONFIG = {
   },
   closedDates: ["2026-12-24","2026-12-25","2026-12-26","2026-12-31","2027-01-01"],
   takenSlots: ["2026-11-17T10:00","2026-11-17T10:30","2026-11-19T14:00"],
-
   humanCheck: { holdMs:900, minMs:320, verifyMs:700, secondsAfterApprove:3, allowKeyboard:true },
-
-  /* Microsoft Graph — set these to mirror the real Outlook calendar */
-  microsoft: {
-    enabled: false,                       // true → busy slots come from Graph
-    scope: ["Calendars.Read.Shared"],     // add Calendars.ReadWrite to create events
-    calendarId: "primary"
-  }
+  microsoft: { enabled:false, scope:["Calendars.Read.Shared"], calendarId:"primary" }
 };
 
 /* ============================================================
@@ -347,7 +341,7 @@ function renderCalendar(){
   daysEl.innerHTML = "";
 
   const first  = new Date(state.view.getFullYear(), state.view.getMonth(), 1);
-  const offset = (first.getDay()+6)%7;                                  // Monday-first, Outlook default
+  const offset = (first.getDay()+6)%7;                      // Monday-first
   const total  = new Date(state.view.getFullYear(), state.view.getMonth()+1, 0).getDate();
   const limit  = addDays(today(), CONFIG.maxAdvanceDays);
 
@@ -370,14 +364,12 @@ function renderCalendar(){
     btn.addEventListener("click",()=>{ state.date=date; state.time=null; renderCalendar(); renderSlots(); });
     daysEl.appendChild(btn);
   }
-
   prevBtn.disabled = state.view <= new Date(today().getFullYear(), today().getMonth(), 1);
   nextBtn.disabled = state.view >= new Date(limit.getFullYear(), limit.getMonth(), 1);
   $$("calFoot").textContent = CONFIG.microsoft.enabled
     ? "Availability synced with Microsoft 365"
     : "Availability shown in your local time";
 }
-
 prevBtn.addEventListener("click",()=>{ state.view.setMonth(state.view.getMonth()-1); renderCalendar(); });
 nextBtn.addEventListener("click",()=>{ state.view.setMonth(state.view.getMonth()+1); renderCalendar(); });
 $$("todayBtn").addEventListener("click",()=>{
@@ -497,8 +489,6 @@ const pillCard=$$("pillCard"), pillTitle=$$("pillTitle"), pillSub=$$("pillSub"),
 const HC = CONFIG.humanCheck;
 let rafId=null, holdStart=0, verifying=false, approved=false;
 
-function hostName(){ try{ return new URL(CONFIG.redirectUrl).host; }catch{ return "your site"; } }
-
 function resetHuman(){
   cancelAnimationFrame(rafId); rafId=null;
   verifying=false; approved=false; heldByKeyboard=false;
@@ -513,15 +503,10 @@ function resetHuman(){
   bar.style.transition="none"; bar.style.width="0%";
   announce("Approval required before continuing.");
 }
-
 function showCapsule(){
-  stopTimers();
-  resetHuman();
-  show("capsule");
+  stopTimers(); resetHuman(); show("capsule");
   holdBtn.focus({preventScroll:true});
 }
-
-/* --- hold gesture --- */
 function beginHold(e){
   if(e && e.type==="pointerdown") e.preventDefault();
   if(approved||verifying) return;
@@ -536,7 +521,6 @@ function beginHold(e){
   cancelAnimationFrame(rafId);
   rafId = requestAnimationFrame(tick);
 }
-
 function endHold(){
   if(approved||verifying) return;
   cancelAnimationFrame(rafId); rafId=null;
@@ -556,7 +540,6 @@ function endHold(){
     },1600);
   }
 }
-
 function completeHold(){
   cancelAnimationFrame(rafId); rafId=null;
   if(approved||verifying) return;
@@ -569,8 +552,6 @@ function completeHold(){
   holdFill.style.width="100%";
   setTimeout(approve, HC.verifyMs);
 }
-
-/* --- approved --- */
 function approve(){
   verifying=false; approved=true;
   pillCard.classList.remove("verifying","bad"); pillCard.classList.add("ok");
@@ -608,14 +589,11 @@ function approve(){
     if(left<=0){ stopTimers(); showFinal(); }
   },1000);
 }
-
-/* pointer + keyboard */
 holdBtn.addEventListener("pointerdown", beginHold);
 holdBtn.addEventListener("pointerup", endHold);
 holdBtn.addEventListener("pointerleave", ()=>{ if(!approved&&!verifying) endHold(); });
 holdBtn.addEventListener("pointercancel", endHold);
 holdBtn.addEventListener("click", e=>e.preventDefault());
-
 if(HC.allowKeyboard){
   holdBtn.addEventListener("keydown", e=>{
     if((e.key===" "||e.key==="Enter") && !e.repeat){ heldByKeyboard=true; beginHold(null); }
@@ -630,7 +608,7 @@ if(HC.allowKeyboard){
    ============================================================ */
 function showFinal(){
   stopTimers();
-  if(!approved){ show("capsule"); return; }          // hard guard
+  if(!approved){ show("capsule"); return; }
   const placeholder = !CONFIG.redirectUrl || CONFIG.redirectUrl==="https://example.com";
   if(placeholder){
     $$("finalTitle").textContent="Flow complete — human approved";
@@ -654,7 +632,6 @@ function restart(){
   resetHuman();
   show("book"); renderCalendar(); renderSlots();
 }
-
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape" && !views.capsule.hidden && !approved){
     cancelAnimationFrame(rafId); rafId=null; holdFill.style.width="0%";
@@ -666,9 +643,7 @@ $$("bizName").textContent=`Book with ${CONFIG.businessName}`;
 document.title=`Book an appointment — ${CONFIG.businessName}`;
 renderCalendar(); renderSlots();
 
-/* ── optional: pull real busy slots from Microsoft Graph ──
-   Call syncWithMicrosoft(token) after MSAL sign-in; it fills CONFIG.takenSlots
-   then re-renders, so the grid reflects the real Outlook calendar.          */
+/* optional Microsoft Graph sync */
 async function syncWithMicrosoft(accessToken){
   const from = today().toISOString();
   const to   = addDays(today(), CONFIG.maxAdvanceDays).toISOString();
