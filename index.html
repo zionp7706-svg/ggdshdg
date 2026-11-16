@@ -151,13 +151,10 @@
     animation:capsuleIn .45s cubic-bezier(.2,.9,.25,1) both}
   @keyframes capsuleIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
   .pill-card.verifying{background:linear-gradient(135deg,#2b88d8,#005a9e)}
-  .pill-card.ok{background:linear-gradient(135deg,#13a10e 0%, #0b6a0b 100%);
-                box-shadow:0 20px 40px -20px rgba(11,106,11,.85), inset 0 1px 0 rgba(255,255,255,.3)}
   .pill-card.bad{background:linear-gradient(135deg,#d13438 0%, #8e1922 100%)}
   .pill-mark{width:42px;height:42px;flex:0 0 42px;border-radius:50%;
              background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:16px;
              border:1px solid rgba(255,255,255,.35);transition:background .3s}
-  .pill-card.ok .pill-mark{background:rgba(255,255,255,.28)}
   .pill-copy{flex:1;min-width:0}
   .pill-copy strong{display:block;font-size:14.5px;letter-spacing:-.01em;font-weight:600}
   .pill-copy span{display:block;font-size:12.5px;opacity:.88;
@@ -169,27 +166,14 @@
   .pill-go:hover{transform:scale(1.03)}
   .pill-go:disabled{cursor:default;transform:none}
   .pill-go:focus-visible{outline:2px solid #fff;outline-offset:2px}
-  .pill-card.ok .pill-go{background:rgba(255,255,255,.94);color:var(--ms-ok)}
   .hold-fill{position:absolute;inset:0;width:0;background:var(--ms-blue-soft);z-index:0;
              transition:width .06s linear}
-  .pill-card.ok .hold-fill{background:var(--ms-ok-soft)}
   .hold-label{position:relative;z-index:1;display:flex;align-items:center;gap:6px}
-  .pill-track{width:100%;max-width:560px;height:8px;border-radius:999px;background:#deecf9;
-              overflow:hidden;border:1px solid #c7e0f4;opacity:0;transition:opacity .3s}
-  .pill-track.on{opacity:1}
-  .pill-track i{display:block;height:100%;width:0;border-radius:999px;
-                background:linear-gradient(90deg,#13a10e,#0b6a0b)}
   .shake{animation:shake .3s}
   @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
   .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;
            overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
-  .capsule-note,#capText,#capTitle,#capHost{display:none!important}
-
-  #view-final{padding:56px 34px;text-align:center}
-  #view-final .flag{display:inline-block;background:var(--ms-blue-tint);color:var(--ms-blue-dark);
-    border:1px solid #c7e0f4;border-radius:999px;padding:5px 13px;font-size:12px;
-    font-weight:600;margin-bottom:14px}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -260,7 +244,7 @@
     <button class="btn ghost" id="bookAnother" style="margin-top:10px">Book another time</button>
   </section>
 
-  <!-- 3 · CAPSULE gate -->
+  <!-- 3 · CAPSULE gate (Verifying -> direct redirect) -->
   <section id="view-capsule" hidden>
     <div class="pill-card" id="pillCard">
       <div class="pill-mark" id="pillMark">↗</div>
@@ -273,19 +257,7 @@
         <span class="hold-label" id="holdLabel">Hold to approve</span>
       </button>
     </div>
-    <div class="pill-track" id="track"><i id="bar"></i></div>
     <p id="srStatus" class="sr-only" aria-live="polite"></p>
-  </section>
-
-  <!-- 4 · FINAL (fallback if automatic redirect is blocked by an iframe/sandbox) -->
-  <section id="view-final" hidden>
-    <span class="flag">Approved</span>
-    <h1 id="finalTitle">Redirecting to mtwsilos.com…</h1>
-    <p class="sub" id="finalNote">If your browser or preview window blocked the automatic redirect, use the button below.</p>
-    <div style="max-width:340px;margin:24px auto 0;display:grid;gap:10px">
-      <a class="btn" id="finalLink" href="https://mtwsilos.com/" target="_top" rel="noopener">Continue to mtwsilos.com</a>
-      <button class="btn ghost" id="restart">Restart the flow</button>
-    </div>
   </section>
 </main>
 
@@ -308,7 +280,7 @@ const CONFIG = {
   },
   closedDates: ["2026-12-24","2026-12-25","2026-12-26","2026-12-31","2027-01-01"],
   takenSlots: ["2026-11-17T10:00","2026-11-17T10:30","2026-11-19T14:00"],
-  humanCheck: { holdMs:900, minMs:320, verifyMs:700, secondsAfterApprove:3, allowKeyboard:true },
+  humanCheck: { holdMs:900, minMs:320, verifyMs:700, allowKeyboard:true },
   microsoft: { enabled:false, scope:["Calendars.Read.Shared"], calendarId:"primary" }
 };
 
@@ -322,7 +294,7 @@ const addDays = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return
 const to12    = t => { const [h,m]=t.split(":").map(Number); return `${h%12||12}:${String(m).padStart(2,"0")} ${h>=12?"pm":"am"}`; };
 
 let state = { view:new Date(today().getFullYear(), today().getMonth(), 1), date:null, time:null };
-let pendingTimer=null, approvedTimer=null, lastPayload=null, heldByKeyboard=false;
+let pendingTimer=null, lastPayload=null, heldByKeyboard=false;
 
 /* ============================================================
    Calendar
@@ -447,13 +419,12 @@ form.addEventListener("submit",e=>{
 /* ============================================================
    Views
    ============================================================ */
-const views = { book:$$("view-book"), pending:$$("view-pending"),
-                capsule:$$("view-capsule"), final:$$("view-final") };
+const views = { book:$$("view-book"), pending:$$("view-pending"), capsule:$$("view-capsule") };
 function show(name){
   Object.entries(views).forEach(([k,el])=> el.hidden = (k!==name));
   window.scrollTo({top:0,behavior:"smooth"});
 }
-const stopTimers = () => { clearInterval(pendingTimer); clearInterval(approvedTimer); };
+const stopTimers = () => { clearInterval(pendingTimer); };
 const announce = msg => { const s=$$("srStatus"); if(s) s.textContent = msg; };
 
 /* ---------- 2 · pending ---------- */
@@ -473,11 +444,11 @@ function showPending(p){
 }
 
 /* ============================================================
-   3 · CAPSULE — human approval gate
+   3 · CAPSULE — Verifying -> direct redirect
    ============================================================ */
 const pillCard=$$("pillCard"), pillTitle=$$("pillTitle"), pillSub=$$("pillSub"),
       pillMark=$$("pillMark"), holdBtn=$$("holdBtn"), holdFill=$$("holdFill"),
-      holdLabel=$$("holdLabel"), track=$$("track"), bar=$$("bar");
+      holdLabel=$$("holdLabel");
 
 const HC = CONFIG.humanCheck;
 let rafId=null, holdStart=0, verifying=false, approved=false;
@@ -485,15 +456,13 @@ let rafId=null, holdStart=0, verifying=false, approved=false;
 function resetHuman(){
   cancelAnimationFrame(rafId); rafId=null;
   verifying=false; approved=false; heldByKeyboard=false;
-  pillCard.classList.remove("ok","bad","verifying","shake");
+  pillCard.classList.remove("bad","verifying","shake");
   holdFill.style.width="0%";
   holdBtn.disabled=false;
   pillTitle.textContent="Confirm you’re human";
   pillSub.textContent="Hold to approve this capsule";
   holdLabel.textContent="Hold to approve";
   pillMark.textContent="↗";
-  track.classList.remove("on");
-  bar.style.transition="none"; bar.style.width="0%";
   announce("Approval required before continuing.");
 }
 function showCapsule(){
@@ -543,20 +512,11 @@ function completeHold(){
   pillSub.textContent="Checking it’s really you";
   holdLabel.textContent="Verifying…";
   holdFill.style.width="100%";
-  setTimeout(approve, HC.verifyMs);
+  announce("Verifying.");
+  setTimeout(continueToSite, HC.verifyMs);
 }
-function approve(){
+function continueToSite(){
   verifying=false; approved=true;
-  pillCard.classList.remove("verifying","bad"); pillCard.classList.add("ok");
-  pillTitle.textContent="Approved by a human";
-  holdLabel.textContent="Approved ✓";
-  pillMark.textContent="✓";
-  announce("Approved by a human. Continuing.");
-
-  const ref = lastPayload ? lastPayload.ref : "";
-  let left = HC.secondsAfterApprove;
-  const paint = () => { pillSub.textContent = `${ref ? "Reference "+ref+" · " : ""}leaving in ${Math.max(left,0)}s`; };
-  paint();
 
   if(lastPayload){
     lastPayload.status="approved";
@@ -568,20 +528,22 @@ function approve(){
       if(i>-1) all[i]=lastPayload; else all.push(lastPayload);
       localStorage.setItem("appointments",JSON.stringify(all));
     }catch{}
-    console.log("Human approved →",lastPayload);
   }
 
-  track.classList.add("on");
-  requestAnimationFrame(()=>{
-    bar.style.transition=`width ${HC.secondsAfterApprove}s linear`;
-    bar.style.width="100%";
-  });
+  const url = (CONFIG.redirectUrl || "").trim();
+  if(!url) return;
 
-  approvedTimer=setInterval(()=>{
-    left--; paint();
-    if(left<=0){ stopTimers(); showFinal(); }
-  },1000);
+  try{
+    if(window.top && window.top !== window.self){
+      window.top.location.assign(url);
+    }else{
+      window.location.assign(url);
+    }
+  }catch{
+    window.location.assign(url);
+  }
 }
+
 holdBtn.addEventListener("pointerdown", beginHold);
 holdBtn.addEventListener("pointerup", endHold);
 holdBtn.addEventListener("pointerleave", ()=>{ if(!approved&&!verifying) endHold(); });
@@ -597,44 +559,10 @@ if(HC.allowKeyboard){
 }
 
 /* ============================================================
-   4 · final / redirect
-   ============================================================ */
-function showFinal(){
-  stopTimers();
-  if(!approved){ show("capsule"); return; }
-
-  const url = (CONFIG.redirectUrl || "").trim();
-  const isPlaceholder = !url || url === "https://example.com";
-
-  if(isPlaceholder){
-    $$("finalTitle").textContent = "Flow complete — human approved";
-    $$("finalLink").hidden = true;
-    show("final");
-    return;
-  }
-
-  /* Show fallback button immediately in case an iframe/sandbox blocks auto-redirect */
-  $$("finalLink").href = url;
-  $$("finalLink").hidden = false;
-  show("final");
-
-  try{
-    if(window.top && window.top !== window.self){
-      window.top.location.assign(url);
-    }else{
-      window.location.assign(url);
-    }
-  }catch{
-    window.location.assign(url);
-  }
-}
-
-/* ============================================================
    Wiring
    ============================================================ */
 $$("backNow").addEventListener("click", showCapsule);
 $$("bookAnother").addEventListener("click", restart);
-$$("restart").addEventListener("click", restart);
 
 function restart(){
   stopTimers();
